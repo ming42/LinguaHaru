@@ -18,30 +18,7 @@ import concurrent.futures
 import numpy as np
 import unicodedata
 from tenacity import retry, wait_fixed
-from .translator import (
-    AzureOpenAITranslator,
-    BaseTranslator,
-    GoogleTranslator,
-    BingTranslator,
-    DeepLTranslator,
-    DeepLXTranslator,
-    # OllamaTranslator,
-    OpenAITranslator,
-    ZhipuTranslator,
-    ModelScopeTranslator,
-    SiliconTranslator,
-    GeminiTranslator,
-    AzureTranslator,
-    TencentTranslator,
-    DifyTranslator,
-    AnythingLLMTranslator,
-    XinferenceTranslator,
-    ArgosTranslator,
-    GorkTranslator,
-    GroqTranslator,
-    DeepseekTranslator,
-    OpenAIlikedTranslator,
-)
+from .translator import BaseTranslator
 from pymupdf import Font
 
 log = logging.getLogger(__name__)
@@ -153,20 +130,21 @@ class TranslateConverter(PDFConverterEx):
         self.layout = layout
         self.noto_name = noto_name
         self.noto = noto
-        self.translator: BaseTranslator = None
-        param = service.split(":", 1)
-        service_name = param[0]
-        service_model = param[1] if len(param) > 1 else None
+        # 直接使用BaseTranslator，无需进行服务选择
         if not envs:
             envs = {}
         if not prompt:
             prompt = []
-        for translator in [GoogleTranslator, BingTranslator, DeepLTranslator, DeepLXTranslator, XinferenceTranslator, AzureOpenAITranslator,
-                           OpenAITranslator, ZhipuTranslator, ModelScopeTranslator, SiliconTranslator, GeminiTranslator, AzureTranslator, TencentTranslator, DifyTranslator, AnythingLLMTranslator, ArgosTranslator, GorkTranslator, GroqTranslator, DeepseekTranslator, OpenAIlikedTranslator,]:
-            if service_name == translator.name:
-                self.translator = translator(lang_in, lang_out, service_model, envs=envs, prompt=prompt)
-        if not self.translator:
-            raise ValueError("Unsupported translation service")
+        service_model = None
+        if ":" in service:
+            _, service_model = service.split(":", 1)
+        # 先创建BaseTranslator实例，然后设置环境变量和提示
+        self.translator = BaseTranslator(lang_in, lang_out, service_model)
+        # 如果有环境变量，则设置
+        if envs:
+            self.translator.set_envs(envs)
+        # 保存提示供后续使用
+        self.translator.prompt_template = prompt
 
     def receive_layout(self, ltpage: LTPage):
         # 段落

@@ -18,8 +18,7 @@ class PdfTranslator(DocumentTranslator):
         temp_folder = os.path.join("temp", shared_constants.PDF_FILE_NAME)
         os.makedirs(self.file_dir, exist_ok=True)
 
-        # translate(files=input_file,model=model,thread=1,lang_in=self.src_lang,lang_out=self.dst_lang,service="google")
-        extract_and_translate(input_file=self.input_file_path,model=model,thread=1,lang_in=self.src_lang,lang_out=self.dst_lang,service="google")
+        extract_and_translate(input_file=self.input_file_path,model=model,thread=1,lang_in=self.src_lang,lang_out=self.dst_lang,service="base")
         
         return os.path.join(temp_folder,"src.json")
     
@@ -27,7 +26,7 @@ class PdfTranslator(DocumentTranslator):
         if progress_callback:
             progress_callback(0, desc="Preparing to write translated content...")
 
-        write_translated_result(input_file=self.input_file_path,model=model,thread=1,lang_in=self.src_lang,lang_out=self.dst_lang,service="google")
+        write_translated_result(input_file=self.input_file_path,model=model,thread=1,lang_in=self.src_lang,lang_out=self.dst_lang,service="base")
         if progress_callback:
             progress_callback(80, desc="File writing complete, cleaning db...")
         clean_all_dbs(self.cache_folder)
