@@ -12,7 +12,7 @@ from .app_queue import modified_translate_button_click, request_stop_translation
 from .ui_utils import (
     get_available_languages, on_src_language_change, on_dst_language_change,
     show_mode_checkbox, update_continue_button, update_model_list_and_api_input,
-    get_user_lang, set_labels, on_add_new, swap_languages
+    get_user_lang, set_labels, on_add_new, swap_languages, on_model_choice_change
 )
 from .translation_process import translate_files
 from config.languages_config import LABEL_TRANSLATIONS
@@ -187,8 +187,7 @@ def create_app():
         gr.HTML("""
         <div style="position: fixed; bottom: 0; left: 0; width: 100%; 
                   text-align: center; padding: 10px 0;">
-            Made by Haruka-YANG | Version: 3.2 | 
-            <a href="https://github.com/YANG-Haruka/LinguaHaru" target="_blank">Visit Github</a>
+            Made by Haruka-YANG Mod by M!N9| <a href="https://github.com/YANG-Haruka/LinguaHaru" target="_blank">Origin Version: 3.2</a> | <a href="https://github.com/ming42/LinguaHaru/tree/custom" target="_blank">Mod Version: 3.2.1</a> 
         </div>
         """)
         session_lang = gr.State("en")
@@ -318,6 +317,13 @@ def create_app():
             partial(update_model_list_and_api_input, config=config),
             inputs=use_online_model,
             outputs=[model_choice, api_key_input, thread_count_slider]
+        )
+        
+        # 添加模型选择事件处理
+        model_choice.change(
+            on_model_choice_change,
+            inputs=[model_choice, use_online_model],
+            outputs=[api_key_input]
         )
         
         # Add LAN mode

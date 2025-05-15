@@ -67,7 +67,7 @@ exe = EXE(
     a.scripts,
     a.binaries,
     a.datas,
-    name="LinguaHaru",
+    name="LinguaHaru Mod",
     debug=False,
     upx=True,
     console=True,

@@ -1,5 +1,6 @@
 import gradio as gr
 import os
+import json
 from typing import List, Tuple
 from config.log_config import app_logger
 from config.languages_config import LABEL_TRANSLATIONS, get_available_languages, add_custom_language
@@ -170,9 +171,28 @@ def update_model_list_and_api_input(use_online, config):
             default_online_value = default_online_model
         else:
             default_online_value = online_models[0] if online_models else None
+            
+        # 检查选中的模型配置文件是否存在api_key
+        api_key = ""
+        api_visible = True
+        if default_online_value:
+            config_file_path = os.path.join(config_dir, f"{default_online_value}.json")
+            
+            if os.path.exists(config_file_path):
+                try:
+                    with open(config_file_path, 'r', encoding='utf-8') as f:
+                        model_config = json.load(f)
+                        
+                        if "api_key" in model_config and model_config["api_key"]:
+                            api_key = model_config["api_key"]
+                            api_visible = False  # 如果配置中有api_key，则隐藏输入框
+                except Exception as e:
+                    print(f"读取API配置文件出错: {e}")
+        
+        
         return (
             gr.update(choices=online_models, value=default_online_value),
-            gr.update(visible=True, value=""),
+            gr.update(visible=api_visible, value=api_key),
             gr.update(value=thread_count)
         )
     else:
@@ -234,3 +254,28 @@ def swap_languages(src_lang, dst_lang):
     
     # Return swapped values
     return dst_lang, src_lang
+
+def on_model_choice_change(model_name, use_online):
+    """处理模型选择变更，更新API Key输入框状态."""
+    # 仅在在线模式下处理
+    if not use_online or not model_name:
+        return gr.update(visible=True, value="")
+    
+    config_dir = "config/api_config"
+    config_file_path = os.path.join(config_dir, f"{model_name}.json")
+    
+    api_key = ""
+    api_visible = True
+    
+    if os.path.exists(config_file_path):
+        try:
+            with open(config_file_path, 'r', encoding='utf-8') as f:
+                model_config = json.load(f)
+                
+                if "api_key" in model_config and model_config["api_key"]:
+                    api_key = model_config["api_key"]
+                    api_visible = False
+        except Exception as e:
+            print(f"读取API配置文件出错: {e}")
+    
+    return gr.update(visible=api_visible, value=api_key)
