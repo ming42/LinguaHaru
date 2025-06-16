@@ -1,6 +1,7 @@
 {
-    "base_url": "https://api.openai.com/v1",
-    "model": "o1",
+    "base_url": "https://siliconflow/v1",
+    "model": "deepseek-ai/DeepSeek-V3",
+	"api_key": "sk-",
     "top_p": 0.95,
     "temperature": 0.75,
     "presence_penalty": 0.0,

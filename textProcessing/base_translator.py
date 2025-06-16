@@ -26,14 +26,14 @@ RESULT_JSON_PATH = "dst_translated.json"
 MAX_PREVIOUS_TOKENS = 128
 
 class DocumentTranslator:
-    def __init__(self, input_file_path, model, use_online, api_key, src_lang, dst_lang, continue_mode, max_token, max_retries, thread_count, glossary_path):
+    def __init__(self, input_file_path, model, use_online, src_lang, dst_lang, continue_mode, max_token, max_retries, thread_count, glossary_path):
         self.input_file_path = input_file_path
         self.model = model
         self.src_lang = src_lang
         self.dst_lang = dst_lang
         self.max_token = max_token
         self.use_online = use_online
-        self.api_key = api_key
+
         self.max_retries = max_retries
         self.continue_mode = continue_mode
         self.translated_failed = True
@@ -172,7 +172,7 @@ class DocumentTranslator:
                     
                     # Translate with stop callback
                     translated_text, success = translate_text(
-                        segment, current_previous, self.model, self.use_online, self.api_key,
+                        segment, current_previous, self.model, self.use_online,
                         self.system_prompt, self.user_prompt, self.previous_prompt, self.glossary_prompt, 
                         current_glossary_terms, check_stop_callback=self.check_for_stop
                     )
@@ -391,7 +391,7 @@ class DocumentTranslator:
                     
                     # Translate
                     translated_text, success = translate_text(
-                        segment, current_previous, self.model, self.use_online, self.api_key,
+                        segment, current_previous, self.model, self.use_online,
                         self.system_prompt, self.user_prompt, self.previous_prompt, self.glossary_prompt, 
                         current_glossary_terms, check_stop_callback=self.check_for_stop
                     )

@@ -5,7 +5,7 @@ import json
 import time
 
 
-def translate_text(segments, previous_text, model, use_online, api_key, system_prompt, user_prompt, previous_prompt, glossary_prompt, glossary_terms=None, check_stop_callback=None):
+def translate_text(segments, previous_text, model, use_online, system_prompt, user_prompt, previous_prompt, glossary_prompt, glossary_terms=None, check_stop_callback=None):
     """
     Translate text segments with optional glossary support
     
@@ -91,7 +91,7 @@ def translate_text(segments, previous_text, model, use_online, api_key, system_p
             if not use_online:
                 translation_result, api_success = translate_offline(messages, model)
             else:
-                translation_result, api_success = translate_online(api_key, messages, model)
+                translation_result, api_success = translate_online(messages, model)
             
             # If API call was successful, return the result
             if api_success:

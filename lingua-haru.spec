@@ -62,14 +62,24 @@ a = Analysis(
 
 pyz = PYZ(a.pure)
 
+# 首先创建一个不包含 binaries 和 datas 的 EXE
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.datas,
-    name="LinguaHaru",
+    name="LinguaHaru Mod V3.5.1",
     debug=False,
+    strip=False,
     upx=True,
     console=True,
     icon="img/ico.ico",
+)
+
+# 然后使用 COLLECT 将所有文件收集到一个文件夹中
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.datas,
+    strip=False,
+    upx=True,
+    name="LinguaHaru Mod V3.5.1",
 )
